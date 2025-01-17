@@ -18,6 +18,7 @@ import { useEffect, useState } from "react";
 import { useFetchPromoActive } from "@/api/services/promos/useViewPromos";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
+import Link from "next/link";
 export default function CreateBooking() {
   const params = useParams();
   const token = Cookies.get("token");
@@ -262,7 +263,9 @@ export default function CreateBooking() {
 
               <div className="flex self-end gap-2">
                 <Button className="bg-primary-500 text-white">Submit</Button>
-                <Button className="bg-red-500 text-white">Cancel</Button>
+                <Link href="/user/home">
+                  <Button className="bg-red-500 text-white">Cancel</Button>
+                </Link>
               </div>
             </form>
           </div>
