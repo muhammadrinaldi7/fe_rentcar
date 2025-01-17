@@ -6,8 +6,14 @@ export interface Response<T> {
   message: string;
   success: string;
 }
+export interface SinggleResponse<T> {
+  data: T;
+  message: string;
+  success: string;
+}
 interface Car {
   // Anda bisa menyesuaikan properti berdasarkan data mobil yang ada
+  id: number;
   name: string;
   brand: string;
   model: string;
@@ -51,6 +57,15 @@ export const useFetchAllCars = (url: string) => {
     queryFn: async () => {
       const response = await axiosClient.get<Response<Car[]>>(url);
       return response.data.data;
+    },
+  });
+};
+export const useFetchDetailCar = (url: string) => {
+  return useQuery({
+    queryKey: ["detailCar"],
+    queryFn: async () => {
+      const response = await axiosClient.get<SinggleResponse<Car>>(url);
+      return response.data;
     },
   });
 };

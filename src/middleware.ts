@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { NextRequest } from "next/server";
 import { jwtDecode } from "jwt-decode";
 export interface TokenSession {
+  id: number;
   role: string;
   name: string;
   email: string;

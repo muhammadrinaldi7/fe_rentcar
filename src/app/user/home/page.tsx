@@ -76,6 +76,7 @@ export default function Home() {
               fetchCars?.data.map((car, index) => (
                 <ProductCard
                   key={index}
+                  id={car.id}
                   image={car.image_urls[0]}
                   available={car.available}
                   title={car.name}

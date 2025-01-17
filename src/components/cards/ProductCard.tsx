@@ -8,7 +8,9 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
+import Link from "next/link";
 interface ProductCardProps {
+  id: number;
   image: string;
   title: string;
   type: string;
@@ -65,9 +67,14 @@ export const ProductCard = (props: ProductCardProps) => {
             Rp. {props.price.toLocaleString("id-ID")} /{" "}
             <span className="text-gray-500">hari</span>
           </p>
-          <Button className="bg-primary-500 text-white hover:bg-primary-400">
-            Rental Now
-          </Button>
+          <Link href={`/user/bookings/create/${props.id}`}>
+            <Button
+              disabled={props.available === 0}
+              className="bg-primary-500 text-white hover:bg-primary-400"
+            >
+              Rental Now
+            </Button>
+          </Link>
         </div>
       </CardFooter>
     </Card>

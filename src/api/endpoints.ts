@@ -11,8 +11,15 @@ const endpoints = {
 
   // Cars
   cars: "/get-all-cars",
+  carsReady: "/get-ready-cars",
+  carsBooked: "/get-booked-cars",
+  detailCar: "/cars/",
   car: "/car/",
   createCar: "/cars",
+
+  // Promo
+  Allpromos: "/promos",
+  promosActive: "/get-active-promos",
 
   uploadImage: "/upload-image",
 };

@@ -25,6 +25,8 @@ axiosClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
+      Cookies.remove("token");
+      window.location.href = "/";
     }
     return Promise.reject(error.response?.data || error.message);
   }

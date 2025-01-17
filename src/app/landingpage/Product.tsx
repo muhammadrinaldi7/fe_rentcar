@@ -63,7 +63,8 @@ export const ProductPage = () => {
               fetchCars?.data.map((car, index) => (
                 <ProductCard
                   key={index}
-                  image={car.image_urls[1]}
+                  id={car.id}
+                  image={car.image_urls[0]}
                   available={car.available}
                   title={car.name}
                   type={car.model}
