@@ -1,4 +1,7 @@
 "use client";
+import endpoints from "@/api/endpoints";
+import { useLoginService } from "@/api/services/auth/authService";
+import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -9,6 +12,7 @@ export default function RegisterPage() {
     email: "",
     password: "",
   });
+  const { register } = useLoginService(endpoints.register);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     const { name, value } = e.target;
@@ -17,8 +21,14 @@ export default function RegisterPage() {
       [name]: value,
     }));
   };
-  console.log(payload);
-
+  const handleRegist = (e: React.FormEvent) => {
+    e.preventDefault();
+    register(payload, {
+      onSuccess: (data) => {
+        console.log(data);
+      },
+    });
+  };
   return (
     <section className="bg-white">
       <div className="lg:grid lg:min-h-screen lg:grid-cols-12">
@@ -89,7 +99,10 @@ export default function RegisterPage() {
               </p>
             </div>
 
-            <form action="#" className="mt-8 grid grid-cols-6 gap-6">
+            <form
+              onSubmit={handleRegist}
+              className="mt-8 grid grid-cols-6 gap-6"
+            >
               <div className="col-span-6 sm:col-span-3">
                 <label
                   htmlFor="Name"
@@ -146,22 +159,6 @@ export default function RegisterPage() {
                 />
               </div>
 
-              <div className="col-span-6 sm:col-span-3">
-                <label
-                  htmlFor="PasswordConfirmation"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Password Confirmation
-                </label>
-
-                <input
-                  type="password"
-                  id="PasswordConfirmation"
-                  name="password_confirmation"
-                  className="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
-                />
-              </div>
-
               <div className="col-span-6">
                 <p className="text-sm text-gray-500">
                   By creating an account, you agree to our
@@ -178,9 +175,18 @@ export default function RegisterPage() {
               </div>
 
               <div className="col-span-6 sm:flex sm:items-center sm:gap-4">
-                <button className="inline-block shrink-0 rounded-md border border-blue-600 bg-blue-600 px-12 py-3 text-sm font-medium text-white transition hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500">
+                <Button
+                  className="border-blue-600 bg-blue-600 hover:bg-transparent text-white hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500"
+                  type="submit"
+                >
                   Create an account
-                </button>
+                </Button>
+                {/* <button
+                  type="submit"
+                  className="inline-block shrink-0 rounded-md border border-blue-600 bg-blue-600 px-12 py-3 text-sm font-medium text-white transition hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500"
+                >
+                  Create an account
+                </button> */}
 
                 <p className="mt-4 text-sm text-gray-500 sm:mt-0">
                   Already have an account?

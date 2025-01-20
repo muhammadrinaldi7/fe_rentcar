@@ -17,11 +17,15 @@ const endpoints = {
   car: "/car/",
   createCar: "/cars",
 
+  // Booking
+  booking: "/booking",
+  createBook: "/bookings",
+
   // Promo
   Allpromos: "/promos",
   promosActive: "/get-active-promos",
 
-  uploadImage: "/upload-image",
+  uploadImage: "/images/upload",
 };
 
 export default endpoints;

@@ -95,7 +95,7 @@ export default function CreateBooking() {
       toast.error("Promo Tidak Ditemukan");
     }
   };
-  console.log(promoCode);
+
   const calculatePrice = () => {
     if (startDate && endDate && detailMobil) {
       const start = new Date(startDate);

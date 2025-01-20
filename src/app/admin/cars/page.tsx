@@ -173,6 +173,13 @@ export default function Cars() {
               </TableRow>
             </TableHeader>
             <TableBody>
+              {filteredItems?.length == 0 && (
+                <TableRow>
+                  <TableCell colSpan={7} className="h-24 text-center">
+                    No results.
+                  </TableCell>
+                </TableRow>
+              )}
               {filteredItems?.map((car, index) => (
                 <TableRow key={index}>
                   <TableCell>{index + 1}</TableCell>

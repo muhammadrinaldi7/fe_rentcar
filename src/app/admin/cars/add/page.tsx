@@ -60,6 +60,7 @@ export default function AddCars() {
       });
     }
   };
+  console.log(payload);
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     createCar(payload, {

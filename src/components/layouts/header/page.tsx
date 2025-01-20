@@ -178,9 +178,11 @@ export default function Header() {
                     Login
                   </Button>
                 </Link>
-                <Button className="bg-success-600 hover:bg-white hover:text-black shadow-md text-white">
-                  Register
-                </Button>
+                <Link href={"auth/register"}>
+                  <Button className="bg-success-600 hover:bg-white hover:text-black shadow-md text-white">
+                    Register
+                  </Button>
+                </Link>
               </div>
             )}
             {/* <div className="block md:hidden">

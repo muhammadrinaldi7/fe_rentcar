@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
       "e7.pngegg.com",
       "www.dvarteverde.com",
       "127.0.0.1",
+      "rent-car-api.temansetiaibuhamil.web.id",
     ],
   },
 };
