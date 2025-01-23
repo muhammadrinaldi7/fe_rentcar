@@ -9,9 +9,7 @@ export default function LayoutPage({
   return (
     <>
       <Header />
-      <div className="mx-auto max-w-screen-xl bg-[#F6F7F9] px-4 py-4 sm:px-6 lg:px-8">
-        {children}
-      </div>
+      <div className="mx-auto max-w-screen-xl bg-[#F6F7F9]">{children}</div>
       <Footer />
     </>
   );

@@ -3,13 +3,10 @@ import axiosClient from "@/api/axiosClient";
 import { useMutation } from "@tanstack/react-query";
 
 export interface BookPayload {
-  user_id: number;
   car_id: number;
+  promo_code: string;
   start_date: string;
   end_date: string;
-  total_price: number;
-  final_price: number;
-  status: string;
 }
 // export interface BookResponse {
 
@@ -28,6 +25,15 @@ export const useActionBook = (url: string) => {
     //   });
     // },
   });
+  const { mutate: applyPromo } = useMutation({
+    mutationFn: async (payload: {
+      promo_code: string;
+      total_price: number;
+    }) => {
+      const response = await axiosClient.post(url, payload);
+      return response.data;
+    },
+  });
 
-  return { createBook };
+  return { createBook, applyPromo };
 };

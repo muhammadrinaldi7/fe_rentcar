@@ -9,97 +9,63 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Image from "next/image";
-import { useParams } from "next/navigation";
-import Cookies from "js-cookie";
-import { jwtDecode } from "jwt-decode";
-import { TokenSession } from "@/middleware";
+import { useParams, useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
-import { useEffect, useState } from "react";
-import { useFetchPromoActive } from "@/api/services/promos/useViewPromos";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import toast from "react-hot-toast";
 import Link from "next/link";
+import {
+  BookPayload,
+  useActionBook,
+} from "@/api/services/bookings/useActionBook";
 export default function CreateBooking() {
   const params = useParams();
-  const token = Cookies.get("token");
-  const { data: promoActive } = useFetchPromoActive(endpoints.promosActive);
+  const route = useRouter();
+  const { applyPromo } = useActionBook(endpoints.applyPromo);
   const { data: detailMobil } = useFetchDetailCar(
     endpoints.detailCar + params.id
   );
-
-  const [user, setUser] = useState<TokenSession | null>(null);
-  const [startDate, setStartDate] = useState<string | null>(null);
-  const [endDate, setEndDate] = useState<string | null>(null);
-  const [price, setPrice] = useState<number>(0);
+  const { createBook } = useActionBook(endpoints.createBook);
+  const [price, setPrice] = useState<number>(
+    detailMobil?.data.price_per_day || 0
+  );
   const [finalPrice, setFinalPrice] = useState<number>(0);
-  const [typeDiscount, setTypeDiscount] = useState<string>("");
-  const [valueDiscount, setValueDiscount] = useState<number>(0);
-  const [promoCode, setPromoCode] = useState<string>("");
+  const [payload, setPayload] = useState<BookPayload>({
+    car_id: Number(params.id),
+    promo_code: "",
+    start_date: "",
+    end_date: "",
+  });
 
   useEffect(() => {
-    try {
-      const user = jwtDecode(token || "") as TokenSession;
-      setUser(user);
-    } catch (error) {
-      console.error("Gagal mendekode token:", error);
-    }
-  }, [token]);
-
-  useEffect(() => {
-    if (startDate && endDate) {
+    if (payload.start_date && payload.end_date) {
       calculatePrice();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [startDate, endDate, promoCode]);
+  }, [payload.start_date, payload.end_date]);
 
-  const handleChangePromo = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const promoInput = e.target.value.trim().toUpperCase(); // Memastikan promo code dalam format yang konsisten
-
-    setPromoCode(promoInput);
-
-    // Mencari promo yang sesuai dengan promo code yang dimasukkan
-    const selectedPromo = promoActive?.find(
-      (promo) => promo.code.toUpperCase() === promoInput // Bandingkan dalam format uppercase agar case-insensitive
-    );
-    if (selectedPromo) {
-      setTypeDiscount(selectedPromo.discount_type);
-      setValueDiscount(selectedPromo.discount_value);
-    } else {
-      setTypeDiscount("");
-      setValueDiscount(0);
-    }
-  };
+  console.log(price);
   const handleClickPromo = () => {
-    const selectedPromo = promoActive?.find(
-      (promo) => promo.code.toUpperCase() === promoCode // Bandingkan dalam format uppercase agar case-insensitive
-    );
-    if (selectedPromo) {
-      let discount = 0;
-      // Cek apakah ada promo code
-      if (promoCode) {
-        // discount = totalPrice * 0.5; // Diskon 50% jika kode promo sesuai
-        switch (typeDiscount) {
-          case "%":
-            discount = (price * valueDiscount) / 100;
-            break;
-          case "fixed":
-            discount = valueDiscount;
-            break;
-        }
+    applyPromo(
+      { promo_code: payload.promo_code, total_price: price },
+      {
+        onSuccess: (data) => {
+          console.log(data);
+          setFinalPrice(data.final_price);
+          toast.success(data.message);
+        },
+        onError: (error) => {
+          toast.error(error.message);
+        },
       }
-      // Hitung harga final setelah diskon
-      const final = price - discount;
-      setFinalPrice(final);
-      toast.success("Promo Berhasil Ditambahkan");
-    } else {
-      toast.error("Promo Tidak Ditemukan");
-    }
+    );
   };
 
   const calculatePrice = () => {
-    if (startDate && endDate && detailMobil) {
-      const start = new Date(startDate);
-      const end = new Date(endDate);
+    if (payload.start_date && payload.end_date && detailMobil) {
+      const start = new Date(payload.start_date);
+      const end = new Date(payload.end_date);
 
       // Menghitung jumlah hari sewa
       const durationInMilliseconds = end.getTime() - start.getTime();
@@ -112,9 +78,23 @@ export default function CreateBooking() {
 
       setPrice(totalPrice);
       setFinalPrice(totalPrice);
+      setPayload((prev) => ({
+        ...prev,
+        final_price: totalPrice,
+        total_price: totalPrice,
+      }));
     }
   };
-
+  const handleCreateBooking = (e: React.FormEvent) => {
+    e.preventDefault();
+    createBook(payload, {
+      onSuccess: (data) => {
+        console.log(data);
+        toast.success("Booking Berhasil");
+        route.push("/user/payments/pay/" + data.data.id);
+      },
+    });
+  };
   return (
     <>
       <LayoutUser>
@@ -197,8 +177,13 @@ export default function CreateBooking() {
                   type="text"
                   placeholder="Insert Promo Code"
                   className=" bg-[#F6F7F9] border-[#F6F7F9] text-seccond-400 font-semibold"
-                  value={promoCode.toUpperCase()}
-                  onChange={handleChangePromo}
+                  value={payload.promo_code}
+                  onChange={(e) =>
+                    setPayload({
+                      ...payload,
+                      promo_code: e.target.value,
+                    })
+                  }
                 />
                 <span className="absolute inset-y-0 end-10 grid w-10 place-content-center">
                   <Button
@@ -216,20 +201,17 @@ export default function CreateBooking() {
               <h1 className="text-lg font-bold">Create Booking</h1>
               <p className="text-primary-500 text-sm">Step 1</p>
             </div>
-            <form action="" className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-              <div className="flex flex-col gap-2">
-                <label htmlFor="">Email</label>
-                <Input type="text" value={user ? user.email : ""} readOnly />
-              </div>
-              <div className="flex flex-col gap-2">
-                <label htmlFor="">Nama</label>
-                <Input type="text" value={user ? user.name : ""} readOnly />
-              </div>
+            <form
+              onSubmit={handleCreateBooking}
+              className="grid grid-cols-1 gap-4 lg:grid-cols-2"
+            >
               <div className="flex w-full flex-col gap-2">
                 <label>Dari Tanggal</label>
                 <input
                   type="datetime-local"
-                  onChange={(e) => setStartDate(e.target.value)}
+                  onChange={(e) =>
+                    setPayload({ ...payload, start_date: e.target.value })
+                  }
                   className="h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors"
                 />
               </div>
@@ -238,7 +220,9 @@ export default function CreateBooking() {
                 <label>Sampai Tanggal</label>
                 <input
                   type="datetime-local"
-                  onChange={(e) => setEndDate(e.target.value)}
+                  onChange={(e) =>
+                    setPayload({ ...payload, end_date: e.target.value })
+                  }
                   className="h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors"
                 />
               </div>
@@ -262,7 +246,9 @@ export default function CreateBooking() {
               </div>
 
               <div className="flex self-end gap-2">
-                <Button className="bg-primary-500 text-white">Submit</Button>
+                <Button type="submit" className="bg-primary-500 text-white">
+                  Submit
+                </Button>
                 <Link href="/user/home">
                   <Button className="bg-red-500 text-white">Cancel</Button>
                 </Link>

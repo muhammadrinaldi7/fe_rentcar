@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import "aos/dist/aos.css";
 
 body {
   font-family: Arial, Helvetica, sans-serif;
@@ -49,6 +50,26 @@ body {
     }
     100% {
       transform: translateX(-100%);
+    }
+  }
+  @layer utilities {
+    .car-image {
+      animation: moveCar 1s linear both;
+      scroll-timeline: car-move-scroll;
+    }
+
+    @scroll-timeline car-move-scroll {
+      scroll-offsets: auto;
+      source: body;
+    }
+
+    @keyframes moveCar {
+      from {
+        transform: translateX(0);
+      }
+      to {
+        transform: translateX(-100vw);
+      }
     }
   }
 

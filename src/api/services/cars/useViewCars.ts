@@ -7,9 +7,9 @@ export interface Response<T> {
   success: string;
 }
 export interface SinggleResponse<T> {
-  data: T;
-  message: string;
   success: string;
+  message: string;
+  data: T;
 }
 interface Car {
   // Anda bisa menyesuaikan properti berdasarkan data mobil yang ada

@@ -1,26 +1,31 @@
 import {
   Card,
-  CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from "../ui/card";
-
-export const PromoCard = () => {
+export interface PromoCardProps {
+  code: string;
+  desc: string;
+  type: string;
+  value: number;
+  startDate: string;
+  endDate: string;
+}
+export const PromoCard = (props: PromoCardProps) => {
   return (
     <Card className="text-info-600 rounded-tr-none hover:drop-shadow-lg hover:shadow-primary-400">
       <CardHeader className="pb-0 mb-0">
-        <CardTitle className="text-2xl">Promo</CardTitle>
-        <CardDescription>Priode: 25 Januari - 25 Februari</CardDescription>
+        <CardTitle className="text-xl">{props.desc}</CardTitle>
+        <CardDescription>
+          Priode: {props.startDate} - {props.endDate}
+        </CardDescription>
       </CardHeader>
-      <CardContent className="text-lg py-0 my-0">
-        <p>Minimal Sewa 1 Hari</p>
-      </CardContent>
       <CardFooter>
         <div className="flex flex-row gap-4 w-full text-sm justify-between">
           <p>Promo Code :</p>
-          <p>PRX002</p>
+          <p>{props.code}</p>
         </div>
       </CardFooter>
     </Card>

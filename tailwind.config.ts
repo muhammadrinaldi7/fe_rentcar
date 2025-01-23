@@ -1,6 +1,7 @@
 import type { Config } from "tailwindcss";
 import tailForm from "@tailwindcss/forms";
 import tailAnimate from "tailwindcss-animate";
+import plugin from 'tailwindcss/plugin'
 export default {
   darkMode: ["class"],
   content: [
@@ -140,5 +141,9 @@ export default {
       },
     },
   },
-  plugins: [tailForm, tailAnimate],
+  plugins: [tailForm, tailAnimate, plugin(function({addUtilities}) {
+      addUtilities({
+        "@scroll-timeline": "@scroll-timeline",
+      });
+  })],
 } satisfies Config;

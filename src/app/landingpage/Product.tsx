@@ -33,7 +33,7 @@ export const ProductPage = () => {
                 "/nissan.png",
               ].map((src, index) => (
                 <CarouselItem key={index} className="basis-1/3 lg:basis-1/6">
-                  <div className="w-24 h-24">
+                  <div data-aos="fade-up" className="w-24 h-24">
                     <Image
                       width={1000}
                       height={1000}

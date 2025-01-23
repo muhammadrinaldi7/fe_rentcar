@@ -84,13 +84,13 @@ export const HeaderUser = () => {
                     My profile
                   </a>
 
-                  <a
-                    href="#"
+                  <Link
+                    href="/user/bookings"
                     className="block rounded-lg px-4 py-2 text-sm text-seccond-500 hover:bg-gray-50 hover:text-gray-700"
                     role="menuitem"
                   >
-                    Billing summary
-                  </a>
+                    My Bookings
+                  </Link>
 
                   <a
                     href="#"

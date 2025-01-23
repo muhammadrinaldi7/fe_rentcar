@@ -1,8 +1,9 @@
 "use client";
 import endpoints from "@/api/endpoints";
 import { useFetchAllCars } from "@/api/services/cars/useViewCars";
+import { useFetchPromoActive } from "@/api/services/promos/useViewPromos";
 import { ProductCard } from "@/components/cards/ProductCard";
-import { PromoCard } from "@/components/cards/PromoCard";
+import PromoCard1 from "@/components/cards/PromoCard1";
 import { LayoutUser } from "@/components/layouts/LayoutUser";
 import {
   Carousel,
@@ -21,6 +22,8 @@ import Link from "next/link";
 
 export default function Home() {
   const { data: fetchCars, isLoading } = useFetchAllCars(endpoints.cars);
+  const { data: promos } = useFetchPromoActive(endpoints.promosActive);
+  console.log(promos);
   return (
     <LayoutUser>
       <div className="flex py-8 flex-col gap-8">
@@ -33,32 +36,24 @@ export default function Home() {
           </div>
           <Carousel>
             <CarouselContent>
-              <CarouselItem className="lg:basis-1/3">
-                <PromoCard />
-              </CarouselItem>
-              <CarouselItem className="lg:basis-1/3">
-                <PromoCard />
-              </CarouselItem>
-              <CarouselItem className="lg:basis-1/3">
-                <PromoCard />
-              </CarouselItem>
-              <CarouselItem className="lg:basis-1/3">
-                <PromoCard />
-              </CarouselItem>
-              <CarouselItem className="lg:basis-1/3">
-                <PromoCard />
-              </CarouselItem>
-              {/* <CarouselItem className="lg:basis-1/3">
-                <ProductCard
-                  image="https://images.unsplash.com/photo-1643792773771-8171455aaaf9?q=80&w=1931&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                  title="Innova Reborn"
-                  type="Family Car"
-                  transmission="Automatic"
-                  capacity="4"
-                  fuel="70"
-                  price={350000}
-                />
-              </CarouselItem> */}
+              {promos?.map((promo, index) => (
+                <CarouselItem key={index} className="lg:basis-1/3">
+                  {/* <PromoCard
+                    title={promo.description}
+                    startDate={promo.start_date}
+                    endDate={promo.end_date}
+                    code={promo.code}
+                  /> */}
+                  <PromoCard1
+                    code={promo.code}
+                    desc={promo.description}
+                    type={promo.discount_type}
+                    value={promo.discount_value}
+                    startDate={promo.start_date}
+                    endDate={promo.end_date}
+                  />
+                </CarouselItem>
+              ))}
             </CarouselContent>
           </Carousel>
         </div>
@@ -69,7 +64,7 @@ export default function Home() {
               <p className="text-primary-500">See All</p>
             </Link>
           </div>
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-3 xl:grid-cols-4 justify-center items-center">
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-3 justify-center items-center">
             {isLoading ? (
               <p>Loading...</p>
             ) : (

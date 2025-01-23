@@ -20,11 +20,12 @@ const endpoints = {
   // Booking
   booking: "/booking",
   createBook: "/bookings",
+  myBook: "/my-booking",
 
   // Promo
   Allpromos: "/promos",
   promosActive: "/get-active-promos",
-
+  applyPromo: "/apply-promo",
   uploadImage: "/images/upload",
 };
 
