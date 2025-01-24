@@ -3,7 +3,7 @@ import endpoints from "@/api/endpoints";
 import { useFetchAllCars } from "@/api/services/cars/useViewCars";
 import { useFetchPromoActive } from "@/api/services/promos/useViewPromos";
 import { ProductCard } from "@/components/cards/ProductCard";
-import PromoCard1 from "@/components/cards/PromoCard1";
+import PromoCard from "@/components/cards/PromoCard";
 import { LayoutUser } from "@/components/layouts/LayoutUser";
 import {
   Carousel,
@@ -38,13 +38,7 @@ export default function Home() {
             <CarouselContent>
               {promos?.map((promo, index) => (
                 <CarouselItem key={index} className="lg:basis-1/3">
-                  {/* <PromoCard
-                    title={promo.description}
-                    startDate={promo.start_date}
-                    endDate={promo.end_date}
-                    code={promo.code}
-                  /> */}
-                  <PromoCard1
+                  <PromoCard
                     code={promo.code}
                     desc={promo.description}
                     type={promo.discount_type}
