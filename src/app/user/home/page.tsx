@@ -5,25 +5,29 @@ import { useFetchPromoActive } from "@/api/services/promos/useViewPromos";
 import { ProductCard } from "@/components/cards/ProductCard";
 import PromoCard from "@/components/cards/PromoCard";
 import { LayoutUser } from "@/components/layouts/LayoutUser";
+import { Button } from "@/components/ui/button";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
 } from "@/components/ui/carousel";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
 import Link from "next/link";
+import { useState } from "react";
 
 export default function Home() {
-  const { data: fetchCars, isLoading } = useFetchAllCars(endpoints.cars);
   const { data: promos } = useFetchPromoActive(endpoints.promosActive);
-  console.log(promos);
+  const [perPage, setPerPage] = useState(5);
+  const {
+    data: fetchCars,
+    isLoading,
+    refetch,
+  } = useFetchAllCars(endpoints.cars + `?perPage=${perPage}`);
+
+  const handleMore = () => {
+    setPerPage(perPage + 5);
+    refetch();
+  };
+  console.log(fetchCars);
   return (
     <LayoutUser>
       <div className="flex py-8 flex-col gap-8">
@@ -54,9 +58,6 @@ export default function Home() {
         <div className="flex flex-col gap-5">
           <div className="flex items-center justify-between px-2">
             <h1 className="text-seccond-400">Armada Kami</h1>
-            <Link href="/user/promo">
-              <p className="text-primary-500">See All</p>
-            </Link>
           </div>
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-3 justify-center items-center">
             {isLoading ? (
@@ -79,19 +80,7 @@ export default function Home() {
             )}
           </div>
           <div className="flex items-center justify-center px-2">
-            <Pagination>
-              <PaginationContent>
-                <PaginationItem>
-                  <PaginationPrevious href="#" />
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationLink href="#">1</PaginationLink>
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationNext href="#" />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
+            <Button onClick={handleMore}>More</Button>
           </div>
         </div>
       </div>
