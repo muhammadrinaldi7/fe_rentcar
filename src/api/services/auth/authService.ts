@@ -37,7 +37,7 @@ export const useLoginService = (url: string) => {
     },
     onSuccess: (data) => {
       // Log untuk memastikan token disimpan
-      Cookies.set("token", data.token, { expires: 1 });
+      Cookies.set("token", data.token);
       console.log("Token saved:", Cookies.get("token"));
       // Log untuk memastikan route.push dipanggil
       console.log("Redirecting to /user/home");
