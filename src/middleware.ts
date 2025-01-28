@@ -12,39 +12,43 @@ export interface TokenSession {
 export default function middleware(req: NextRequest) {
   const session = req.cookies.get("token")?.value;
 
-  // Jika tidak ada token, redirect ke login
+  // Jika tidak ada token, biarkan pengguna tetap di halaman yang diminta
   if (!session) {
-    return NextResponse.redirect(new URL("/auth/login", req.url));
+    return NextResponse.next();
   }
 
   let decoded: TokenSession | null = null;
+
   try {
-    // Coba mendecode token untuk mendapatkan data pengguna
+    // Decode token untuk mendapatkan data role
     decoded = jwtDecode(session) as TokenSession;
   } catch (error) {
-    // Jika decoding token gagal, redirect ke login
     console.error("Token decoding failed:", error);
-    return NextResponse.redirect(new URL("/auth/login", req.url));
+    // Jika token tidak valid, hapus cookie dan arahkan ke halaman login
+    const response = NextResponse.redirect(new URL("/auth/login", req.url));
+    response.cookies.delete("token");
+    return response;
   }
 
-  // Cek role dan redirect berdasarkan path
+  // Redirect berdasarkan role
   if (decoded) {
-    // Jika user mencoba mengakses halaman admin tetapi bukan admin, redirect ke halaman user
-    if (req.nextUrl.pathname.startsWith("/admin") && decoded.role !== "admin") {
-      return NextResponse.redirect(new URL("/user/home", req.url));
-    }
-
-    // Jika user mencoba mengakses halaman user tetapi bukan user, redirect ke halaman admin
-    if (req.nextUrl.pathname.startsWith("/user") && decoded.role !== "user") {
+    if (
+      decoded.role === "admin" &&
+      req.nextUrl.pathname !== "/admin/dashboard"
+    ) {
       return NextResponse.redirect(new URL("/admin/dashboard", req.url));
     }
+
+    if (decoded.role === "user" && req.nextUrl.pathname !== "/user/home") {
+      return NextResponse.redirect(new URL("/user/home", req.url));
+    }
   }
 
-  // Jika token valid dan sesuai role, lanjutkan ke rute yang diminta
+  // Jika token valid dan tidak ada kebutuhan untuk redirect, lanjutkan ke halaman yang diminta
   return NextResponse.next();
 }
 
-// Menentukan matcher untuk path yang perlu dicek
+// Konfigurasi path yang akan dicek middleware
 export const config = {
-  matcher: ["/admin/:path*", "/user/:path*"],
+  matcher: ["/admin/:path*", "/user/:path*", "/", "/auth/login"],
 };

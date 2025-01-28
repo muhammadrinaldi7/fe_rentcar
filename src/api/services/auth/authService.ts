@@ -38,10 +38,6 @@ export const useLoginService = (url: string) => {
     onSuccess: (data) => {
       // Log untuk memastikan token disimpan
       Cookies.set("token", data.token);
-      setTimeout(() => {
-        toast.success(`${data.message}`, { duration: 3000 });
-        route.push("/user/home");
-      }, 2000);
     },
   });
   const { mutate: register } = useMutation({
