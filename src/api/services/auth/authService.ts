@@ -36,9 +36,10 @@ export const useLoginService = (url: string) => {
       return response.data;
     },
     onSuccess: (data) => {
-      Cookies.set("token", data.token);
+      // Simpan token ke cookie/localStorage/sessionStorage jika diperlukan
+      Cookies.set("token", data.token, { expires: 1 });
       route.push("/user/home");
-      toast.success("Login Berhasil");
+      toast.success("Login Berhasil!");
     },
   });
   const { mutate: register } = useMutation({

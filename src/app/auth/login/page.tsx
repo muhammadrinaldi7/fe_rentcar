@@ -3,12 +3,9 @@ import endpoints from "@/api/endpoints";
 import { useLoginService } from "@/api/services/auth/authService";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import Cookies from "js-cookie";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 export default function LoginPage() {
   const { login } = useLoginService(endpoints.login);
-  const route = useRouter();
   const [message, setMessage] = useState("");
   const [payload, setPayload] = useState({
     email: "",
@@ -33,7 +30,6 @@ export default function LoginPage() {
         email: payload.email,
         password: payload.password,
       },
-
       {
         onError: (err) => {
           console.log(err);
@@ -42,11 +38,6 @@ export default function LoginPage() {
       }
     );
   };
-  useEffect(() => {
-    if (Cookies.get("token")) {
-      route.push("/user/home");
-    }
-  }, [route]);
   return (
     <section className="bg-white">
       <div className="lg:grid lg:min-h-screen lg:grid-cols-12">
