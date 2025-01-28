@@ -38,10 +38,8 @@ export const useLoginService = (url: string) => {
     onSuccess: (data) => {
       // Log untuk memastikan token disimpan
       Cookies.set("token", data.token);
-      console.log("Token saved:", Cookies.get("token"));
-      // Log untuk memastikan route.push dipanggil
-      console.log("Redirecting to /user/home");
       setTimeout(() => {
+        toast.success(`${data.message}`, { duration: 3000 });
         route.push("/user/home");
       }, 2000);
     },
