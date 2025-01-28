@@ -36,8 +36,11 @@ export const useLoginService = (url: string) => {
       return response.data;
     },
     onSuccess: (data) => {
-      // Simpan token ke cookie/localStorage/sessionStorage jika diperlukan
+      // Log untuk memastikan token disimpan
       Cookies.set("token", data.token, { expires: 1 });
+      console.log("Token saved:", Cookies.get("token"));
+      // Log untuk memastikan route.push dipanggil
+      console.log("Redirecting to /user/home");
       route.push("/user/home");
     },
   });
