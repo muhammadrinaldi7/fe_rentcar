@@ -3,8 +3,12 @@ import endpoints from "@/api/endpoints";
 import { useLoginService } from "@/api/services/auth/authService";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import toast from "react-hot-toast";
+import Cookies from "js-cookie";
 export default function LoginPage() {
+  const route = useRouter();
   const { login } = useLoginService(endpoints.login);
   const [message, setMessage] = useState("");
   const [payload, setPayload] = useState({
@@ -30,7 +34,14 @@ export default function LoginPage() {
         email: payload.email,
         password: payload.password,
       },
+
       {
+        onSuccess: (data) => {
+          // Simpan token ke cookie/localStorage/sessionStorage jika diperlukan
+          Cookies.set("token", data.token, { expires: 1 });
+          route.push("/user/home");
+          toast.success("Login Berhasil");
+        },
         onError: (err) => {
           console.log(err);
           setMessage(err.message);
