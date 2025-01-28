@@ -41,7 +41,9 @@ export const useLoginService = (url: string) => {
       console.log("Token saved:", Cookies.get("token"));
       // Log untuk memastikan route.push dipanggil
       console.log("Redirecting to /user/home");
-      route.push("/user/home");
+      setTimeout(() => {
+        route.push("/user/home");
+      }, 2000);
     },
   });
   const { mutate: register } = useMutation({
