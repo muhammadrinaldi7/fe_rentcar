@@ -50,7 +50,7 @@ export const ProductPage = () => {
             {" "}
             <p className="text-sm text-primary-500 font-bold ">See All</p>
           </Link>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 justify-center items-center">
             {isLoading ? (
               <div className="flex flex-col space-y-3">
                 <Skeleton className="h-[125px] w-[250px] bg-seccond-400 rounded-xl" />

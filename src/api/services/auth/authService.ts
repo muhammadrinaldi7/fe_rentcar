@@ -38,7 +38,7 @@ export const useLoginService = (url: string) => {
     onSuccess: (data) => {
       // Simpan token ke cookie/localStorage/sessionStorage jika diperlukan
       Cookies.set("token", data.token, { expires: 1 });
-      route.push("/user/home");
+      route.push("/");
       toast.success("Login Berhasil!");
     },
   });
