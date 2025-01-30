@@ -8,6 +8,11 @@ export interface BookPayload {
   start_date: string;
   end_date: string;
 }
+export interface ErrorResponseBook {
+  start_date: string[0];
+  end_date: string[0];
+  promo_code: string[0];
+}
 // export interface BookResponse {
 
 // }

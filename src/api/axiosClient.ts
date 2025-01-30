@@ -25,8 +25,8 @@ axiosClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response) {
-      Cookies.remove("token");
       if (error.response.status === 401) {
+        Cookies.remove("token");
         window.location.href = "/auth/login";
       }
     }

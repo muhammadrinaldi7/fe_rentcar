@@ -6,7 +6,9 @@ import Link from "next/link";
 import toast from "react-hot-toast";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/stores/authStore";
 export const HeaderUser = () => {
+  const { setLogged } = useAuthStore();
   const { isOpen, toggle } = useHeaderStore();
   const router = useRouter();
   const onLogout = () => {
@@ -42,6 +44,7 @@ export const HeaderUser = () => {
     );
   };
   const handleLogout = () => {
+    setLogged(false);
     Cookies.remove("token");
     router.push("/");
     toast.dismiss();

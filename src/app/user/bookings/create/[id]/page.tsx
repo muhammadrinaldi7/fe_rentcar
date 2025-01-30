@@ -93,6 +93,10 @@ export default function CreateBooking() {
         toast.success("Booking Berhasil");
         route.push("/user/payments/pay/" + data.data.id);
       },
+      onError: (error) => {
+        toast.error(error.message);
+        console.log(error);
+      },
     });
   };
   return (

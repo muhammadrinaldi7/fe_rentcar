@@ -1,4 +1,6 @@
 "use client";
+import endpoints from "@/api/endpoints";
+import { useBookTopPay } from "@/api/services/bookings/useViewBook";
 import { LayoutUser } from "@/components/layouts/LayoutUser";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
@@ -6,7 +8,8 @@ import { useParams } from "next/navigation";
 
 export default function ProcessPayment() {
   const params = useParams();
-  console.log(params);
+  const { data } = useBookTopPay(endpoints.bookToPay + params.id);
+  console.log(data);
   return (
     <LayoutUser>
       <div className="flex gap-2 flex-col">
@@ -15,7 +18,7 @@ export default function ProcessPayment() {
           <div className="flex flex-col md:flex-row gap-4">
             <div className="w-full md:w-1/2 flex justify-center items-center">
               <Image
-                src="/hrv.png"
+                src={data?.car?.image_urls[0] || "/hrv.png"}
                 alt="product"
                 width={1000}
                 height={1000}
@@ -26,29 +29,39 @@ export default function ProcessPayment() {
               <dl className="-my-3 divide-y divide-gray-100 text-sm">
                 <div className="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
                   <dt className="font-medium text-gray-900">Mobil</dt>
-                  <dd className="text-gray-700 sm:col-span-2">Mr</dd>
-                </div>
-
-                <div className="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
-                  <dt className="font-medium text-gray-900">Name</dt>
                   <dd className="text-gray-700 sm:col-span-2">
-                    John Frusciante
+                    {data?.car?.name}
                   </dd>
                 </div>
 
                 <div className="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
-                  <dt className="font-medium text-gray-900">Occupation</dt>
-                  <dd className="text-gray-700 sm:col-span-2">Guitarist</dd>
+                  <dt className="font-medium text-gray-900">Price Per Day</dt>
+                  <dd className="text-gray-700 sm:col-span-2">
+                    {data?.car?.price_per_day.toLocaleString("id-ID")}
+                  </dd>
                 </div>
 
                 <div className="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
-                  <dt className="font-medium text-gray-900">Salary</dt>
-                  <dd className="text-gray-700 sm:col-span-2">$1,000,000+</dd>
+                  <dt className="font-medium text-gray-900">Lama Sewa</dt>
+                  <dd className="text-gray-700 sm:col-span-2">
+                    {data?.duration} Hari
+                  </dd>
                 </div>
 
                 <div className="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
-                  <dt className="font-medium text-gray-900">Bio</dt>
-                  <dd className="text-gray-700 sm:col-span-2"></dd>
+                  <dt className="font-medium text-gray-900">Total Price</dt>
+                  <dd className="text-gray-700 sm:col-span-2">
+                    {data?.total_price.toLocaleString("id-ID")}
+                  </dd>
+                </div>
+
+                <div className="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+                  <dt className="font-medium text-gray-900">
+                    Discount Applied
+                  </dt>
+                  <dd className="text-gray-700 sm:col-span-2">
+                    {data?.discount_applied.toLocaleString("id-ID")}
+                  </dd>
                 </div>
               </dl>
             </div>
@@ -62,7 +75,7 @@ export default function ProcessPayment() {
           <div className="rounded-lg bg-[#F6F7F9] p-4">
             <Input
               type="text"
-              placeholder="Promo Code"
+              placeholder={data?.final_price?.toLocaleString("id-ID")}
               className="text-white"
             />
           </div>

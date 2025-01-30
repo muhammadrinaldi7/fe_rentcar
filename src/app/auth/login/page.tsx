@@ -32,7 +32,6 @@ export default function LoginPage() {
       },
       {
         onError: (err) => {
-          console.log(err);
           setMessage(err.message);
         },
       }

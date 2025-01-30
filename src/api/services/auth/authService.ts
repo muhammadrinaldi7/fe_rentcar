@@ -39,7 +39,7 @@ export const useLoginService = (url: string) => {
       // Simpan token ke cookie/localStorage/sessionStorage jika diperlukan
       Cookies.set("token", data.token, { expires: 1 });
       route.push("/");
-      toast.success("Login Berhasil!");
+      toast.success("Login Berhasil!", { duration: 2000 });
     },
   });
   const { mutate: register } = useMutation({

@@ -10,6 +10,7 @@ import {
 
 export default function Promo() {
   const { data: promos } = useFetchPromoActive(endpoints.promosActive);
+  console.log(promos);
   return (
     <>
       <section id="promo" className="mx-auto py-8">

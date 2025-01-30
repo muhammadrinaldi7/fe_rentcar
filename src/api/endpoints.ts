@@ -21,6 +21,7 @@ const endpoints = {
   booking: "/booking",
   createBook: "/bookings",
   myBook: "/my-booking",
+  bookToPay: "/booktopay/",
 
   // Promo
   Allpromos: "/promos",

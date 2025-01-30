@@ -10,7 +10,6 @@ import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuItem,
   DropdownMenuGroup,
@@ -24,7 +23,9 @@ import {
   faHouse,
   faUsers,
 } from "@fortawesome/free-solid-svg-icons";
+import { useAuthStore } from "@/stores/authStore";
 export const HeaderAdmin = () => {
+  const { setLogged } = useAuthStore();
   const { isOpen, toggle } = useHeaderStore();
   const router = useRouter();
   const onLogout = () => {
@@ -61,6 +62,7 @@ export const HeaderAdmin = () => {
   };
   const handleLogout = () => {
     Cookies.remove("token");
+    setLogged(false);
     router.push("/");
     toast.dismiss();
   };
@@ -84,7 +86,9 @@ export const HeaderAdmin = () => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56 p-3 rounded-lg bg-white shadow-md z-20 absolute -left-7 top-6 ">
-              <DropdownMenuLabel>Main Menu</DropdownMenuLabel>
+              <Link href="/" className="flex gap-2 items-center">
+                <h1 className="text-2xl font-bold text-primary-500">MORENT</h1>
+              </Link>
               <DropdownMenuSeparator className="my-2 bg-gray-400 text-gray-400" />
               <DropdownMenuGroup className="flex flex-col gap-3 mb-4">
                 <DropdownMenuItem>

@@ -3,32 +3,88 @@ import { useHeaderStore } from "@/stores/headerStore";
 import Image from "next/image";
 import Cookies from "js-cookie";
 import { Button } from "@/components/ui/button";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuthStore } from "@/stores/authStore";
 import Link from "next/link";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import { jwtDecode } from "jwt-decode";
+import { TokenSession } from "@/middleware";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faDashboard } from "@fortawesome/free-solid-svg-icons";
 export default function Header() {
   const { logged, setLogged } = useAuthStore();
-
+  const [admin, setAdmin] = useState(false);
   useEffect(() => {
     const cookieValue = Cookies.get("token");
     if (cookieValue) {
       setLogged(true);
+      const decodedToken: TokenSession = jwtDecode(cookieValue);
+      if (decodedToken.role == "admin") {
+        setAdmin(true);
+      }
     }
   }, [setLogged]); // Hanya dijalankan sekali di client
 
   const { isOpen, toggle } = useHeaderStore();
+  const router = useRouter();
   const handleLogout = () => {
-    setLogged(false);
     Cookies.remove("token");
+    setLogged(false);
+    setAdmin(false);
+    router.push("/");
+    toggle();
+    toast.dismiss();
   };
+  const onLogout = () => {
+    toast(
+      () => (
+        <div className="rounded-lg p-2">
+          <h2 className="text-lg font-bold">
+            Are you sure you want to Log Out?
+          </h2>
+          <div className="mt-4 flex gap-2">
+            <button
+              onClick={handleLogout}
+              type="button"
+              className="rounded bg-red-50 px-4 py-2 text-sm font-medium text-red-600"
+            >
+              Yes
+            </button>
+
+            <button
+              type="button"
+              onClick={() => toast.dismiss()}
+              className="rounded bg-green-50 px-4 py-2 text-sm font-medium text-green-600"
+            >
+              No, go back
+            </button>
+          </div>
+        </div>
+      ),
+      {
+        position: "top-center",
+        duration: 3000,
+      }
+    );
+  };
+
   return (
     <header className="bg-white">
       <div className="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <div className="flex-1 md:flex md:items-center md:gap-12">
-            <Link className="block text-primary-500" href="/user/home">
-              <h1 className="text-2xl drop-shadow-lg font-bold">MORENT</h1>
-            </Link>
+            {admin ? (
+              <Link className="block text-primary-500" href="/admin/dashboard">
+                <Button className="text-2xl hover:bg-info-400 flex items-center justify-center hover:text-white drop-shadow-lg font-bold">
+                  Go Dashboard <FontAwesomeIcon icon={faDashboard} />
+                </Button>
+              </Link>
+            ) : (
+              <Link className="block text-primary-500" href="/user/home">
+                <h1 className="text-2xl drop-shadow-lg font-bold">MORENT</h1>
+              </Link>
+            )}
           </div>
 
           <div className="md:flex md:items-center md:gap-12">
@@ -97,7 +153,7 @@ export default function Header() {
             </nav> */}
 
             {logged ? (
-              <div className="hidden md:relative md:block">
+              <div className=" md:relative">
                 <button
                   type="button"
                   className="overflow-hidden rounded-full border border-gray-300 shadow-inner"
@@ -147,7 +203,7 @@ export default function Header() {
 
                     <div className="p-2">
                       <button
-                        onClick={handleLogout}
+                        onClick={onLogout}
                         className="flex w-full items-center gap-2 rounded-lg px-4 py-2 text-sm text-red-700 hover:bg-red-50"
                         role="menuitem"
                       >
