@@ -30,26 +30,31 @@ export default function ProcessPayment() {
   };
   const handlePayment = async () => {
     try {
-      setLoading(true); // ⏳ Set state loading
+      setLoading(true);
       if (!data?.id) throw new Error("Data ID tidak ditemukan");
 
-      const invoiceUrl = await createXenditInvoice(data.id);
-
-      if (invoiceUrl) {
-        console.log("Invoice URL:", invoiceUrl);
-        window.open(invoiceUrl, "_blank"); // 🔗 Buka di tab baru
+      const newTab = window.open("", "_blank");
+      if (newTab) {
+        const invoiceUrl = await createXenditInvoice(data.id);
+        if (invoiceUrl) {
+          newTab.location.href = invoiceUrl; // Redirect tab baru ke invoice URL
+        } else {
+          throw new Error("Gagal mendapatkan invoice URL");
+        }
       } else {
-        throw new Error("Gagal mendapatkan invoice URL");
+        throw new Error("Gagal membuka tab baru");
+        // You can also throw an error or handle this situation in a way that makes sense for your application
       }
     } catch (error) {
       console.error("Payment Error:", error);
       alert("Terjadi kesalahan saat membuat pembayaran. Coba lagi!");
     } finally {
-      setLoading(false); // ✅ Pastikan loading direset
+      setLoading(false);
       toast.success("Pembayaran Berhasil!");
       route.push("/user/bookings");
     }
   };
+
   return (
     <LayoutUser>
       <div className="flex gap-2 flex-col">
