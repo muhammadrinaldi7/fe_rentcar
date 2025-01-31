@@ -14,13 +14,16 @@ export default function ProcessPayment() {
   const route = useRouter();
   console.log(data);
   const createXenditInvoice = async (id: number) => {
-    const res = await fetch(endpoints.xenditCreatePayment, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ id }),
-    });
+    const res = await fetch(
+      "https://rent-car-api.temansetiaibuhamil.web.id/api/xendit/create-invoice",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id }),
+      }
+    );
 
     const data = await res.json();
     return data.invoice_url; // Redirect ke halaman pembayaran Xendit
