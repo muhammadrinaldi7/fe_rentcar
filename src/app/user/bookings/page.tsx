@@ -3,6 +3,7 @@ import endpoints from "@/api/endpoints";
 import { useViewBook } from "@/api/services/bookings/useViewBook";
 import { LayoutUser } from "@/components/layouts/LayoutUser";
 import SimpleLoading from "@/components/loading/SimpleLoading";
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -11,6 +12,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { faCheckCircle, faClock } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Link from "next/link";
 
 export default function Bookings() {
   const { data: myBook, isLoading } = useViewBook(endpoints.myBook);
@@ -21,6 +25,7 @@ export default function Bookings() {
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays;
   };
+
   return (
     <>
       <LayoutUser>
@@ -62,8 +67,47 @@ export default function Bookings() {
                       <TableCell>
                         {item.final_price.toLocaleString("id-ID")}
                       </TableCell>
-                      <TableCell>{item.status}</TableCell>
-                      <TableCell>Detail</TableCell>
+                      <TableCell>
+                        <span
+                          className={`inline-flex items-center justify-center rounded-full border ${
+                            item.status == "pending"
+                              ? "border-amber-500"
+                              : "border-emerald-500"
+                          } px-2.5 py-0.5 ${
+                            item.status == "pending"
+                              ? "text-amber-700"
+                              : "text-emerald-700"
+                          }`}
+                        >
+                          <FontAwesomeIcon
+                            icon={
+                              item.status == "pending" ? faClock : faCheckCircle
+                            }
+                            className="-ms-1 me-1.5 size-4"
+                          />
+                          <p className="whitespace-nowrap text-sm">
+                            {item.status}
+                          </p>
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <Link
+                          className={`${
+                            item.status != "pending"
+                              ? "pointer-events-none"
+                              : ""
+                          }`}
+                          href={`/user/payments/pay/${item.id}`}
+                        >
+                          <Button
+                            size="sm"
+                            className="w-full bg-info-500 text-white hover:text-seccond-400 hover:bg-info-600"
+                            disabled={item.status != "pending"}
+                          >
+                            Bayar
+                          </Button>
+                        </Link>
+                      </TableCell>
                     </TableRow>
                   ))
                 )}

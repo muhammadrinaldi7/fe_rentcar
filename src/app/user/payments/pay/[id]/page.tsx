@@ -2,14 +2,51 @@
 import endpoints from "@/api/endpoints";
 import { useBookTopPay } from "@/api/services/bookings/useViewBook";
 import { LayoutUser } from "@/components/layouts/LayoutUser";
-import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { useParams } from "next/navigation";
-
+import { useParams, useRouter } from "next/navigation";
+import { useState } from "react";
+import toast from "react-hot-toast";
 export default function ProcessPayment() {
   const params = useParams();
+  const [loading, setLoading] = useState(false);
   const { data } = useBookTopPay(endpoints.bookToPay + params.id);
+  const route = useRouter();
   console.log(data);
+  const createXenditInvoice = async (id: number) => {
+    const res = await fetch(endpoints.xenditCreatePayment, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id }),
+    });
+
+    const data = await res.json();
+    return data.invoice_url; // Redirect ke halaman pembayaran Xendit
+  };
+  const handlePayment = async () => {
+    try {
+      setLoading(true); // ⏳ Set state loading
+      if (!data?.id) throw new Error("Data ID tidak ditemukan");
+
+      const invoiceUrl = await createXenditInvoice(data.id);
+
+      if (invoiceUrl) {
+        console.log("Invoice URL:", invoiceUrl);
+        window.open(invoiceUrl, "_blank"); // 🔗 Buka di tab baru
+      } else {
+        throw new Error("Gagal mendapatkan invoice URL");
+      }
+    } catch (error) {
+      console.error("Payment Error:", error);
+      alert("Terjadi kesalahan saat membuat pembayaran. Coba lagi!");
+    } finally {
+      setLoading(false); // ✅ Pastikan loading direset
+      toast.success("Pembayaran Berhasil!");
+      route.push("/user/bookings");
+    }
+  };
   return (
     <LayoutUser>
       <div className="flex gap-2 flex-col">
@@ -25,7 +62,7 @@ export default function ProcessPayment() {
                 className="w-full h-full object-contain"
               />
             </div>
-            <div className="w-full flex flex-col items-center">
+            <div className="w-full flex flex-col ">
               <dl className="-my-3 divide-y divide-gray-100 text-sm">
                 <div className="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
                   <dt className="font-medium text-gray-900">Mobil</dt>
@@ -72,12 +109,26 @@ export default function ProcessPayment() {
             <h1 className="text-lg font-bold">Proses Pembayaran</h1>
             <p className="text-primary-500 text-sm">Step 2</p>
           </div>
-          <div className="rounded-lg bg-[#F6F7F9] p-4">
-            <Input
-              type="text"
-              placeholder={data?.final_price?.toLocaleString("id-ID")}
-              className="text-white"
-            />
+          <div className="rounded-lg flex flex-col gap-3 bg-[#F6F7F9] p-4">
+            <h1 className="text-lg font-bold">Total Pembayaran</h1>
+            <p className="text-lg font-bold">
+              Rp. {data?.final_price.toLocaleString("id-ID")}
+            </p>
+            <button
+              onClick={handlePayment}
+              disabled={loading}
+              className={`px-4 py-2 text-white rounded ${
+                loading ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"
+              }`}
+            >
+              {loading ? "Memproses..." : "Bayar Sekarang"}
+            </button>
+            <Button
+              className="w-full hover:bg-gray-400 bg-white text-black shadow-lg hover:shadow-md"
+              onClick={() => route.push("/user/bookings")}
+            >
+              Batal
+            </Button>
           </div>
         </div>
       </div>

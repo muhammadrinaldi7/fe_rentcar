@@ -28,6 +28,8 @@ const endpoints = {
   promosActive: "/get-active-promos",
   applyPromo: "/apply-promo",
   uploadImage: "/images/upload",
+
+  xenditCreatePayment: "/xendit/create-invoice",
 };
 
 export default endpoints;
