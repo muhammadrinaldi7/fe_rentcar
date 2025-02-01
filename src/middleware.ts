@@ -10,11 +10,7 @@ export interface TokenSession {
 
 export default function middleware(req: NextRequest) {
   const session = req.cookies.get("token")?.value;
-  const token = req.headers.get("Authorization")?.split(" ")[1];
-  if (!session && !token) {
-    // toast.error("Not Authenticated");
-    return NextResponse.redirect(new URL("/auth/login", req.url));
-  }
+
   if (session) {
     const decoded = jwtDecode(session) as TokenSession;
     if (req.nextUrl.pathname.startsWith("/admin")) {
