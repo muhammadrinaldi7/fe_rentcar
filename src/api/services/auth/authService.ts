@@ -3,6 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import toast from "react-hot-toast";
+import { useAuthStore } from "@/stores/authStore";
 interface LoginPayload {
   email: string;
   password: string;
@@ -30,6 +31,7 @@ interface RegisterResponse {
 
 export const useLoginService = (url: string) => {
   const route = useRouter();
+  const { setToken } = useAuthStore();
   const { mutate: login } = useMutation({
     mutationFn: async (payload: LoginPayload) => {
       const response = await axiosClient.post<LoginResponse>(url, payload);
@@ -38,6 +40,7 @@ export const useLoginService = (url: string) => {
     onSuccess: (data) => {
       // Simpan token ke cookie/localStorage/sessionStorage jika diperlukan
       Cookies.set("token", data.token, { expires: 1 });
+      setToken(data.token);
       route.push("/");
       toast.success("Login Berhasil!", { duration: 2000 });
     },
