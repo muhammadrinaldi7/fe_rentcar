@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { NextRequest } from "next/server";
 import { jwtDecode } from "jwt-decode";
+import { cookies } from "next/headers";
 export interface TokenSession {
   id: number;
   role: string;
@@ -8,8 +9,8 @@ export interface TokenSession {
   email: string;
 }
 
-export default function middleware(req: NextRequest) {
-  const session = req.cookies.get("token")?.value;
+export default async function middleware(req: NextRequest) {
+  const session = (await cookies()).get("token")?.value;
 
   if (session) {
     const decoded = jwtDecode(session) as TokenSession;

@@ -1,9 +1,8 @@
 import axiosClient from "@/api/axiosClient";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import Cookies from "js-cookie";
 import toast from "react-hot-toast";
-import { useAuthStore } from "@/stores/authStore";
+import Cookies from "js-cookie";
 interface LoginPayload {
   email: string;
   password: string;
@@ -31,23 +30,23 @@ interface RegisterResponse {
 
 export const useLoginService = (url: string) => {
   const route = useRouter();
-  const { setToken } = useAuthStore();
   const { mutate: login } = useMutation({
     mutationFn: async (payload: LoginPayload) => {
       const response = await axiosClient.post<LoginResponse>(url, payload);
       return response.data;
     },
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       // Simpan token ke cookie/localStorage/sessionStorage jika diperlukan
-      Cookies.set("token", data.token, { expires: 1 });
-      setToken(data.token);
+      await Cookies.set("token", data.token);
       route.push("/");
       toast.success("Login Berhasil!", { duration: 2000 });
     },
   });
   const { mutate: register } = useMutation({
     mutationFn: async (payload: RegisterPayload) => {
-      const response = await axiosClient.post<RegisterResponse>(url, payload);
+      const response = await axiosClient.post<RegisterResponse>(url, payload, {
+        withCredentials: true,
+      });
       return response.data;
     },
     onSuccess: (data) => {
