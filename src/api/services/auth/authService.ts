@@ -35,9 +35,9 @@ export const useLoginService = (url: string) => {
       const response = await axiosClient.post<LoginResponse>(url, payload);
       return response.data;
     },
-    onSuccess: async (data) => {
+    onSuccess: (data) => {
       // Simpan token ke cookie/localStorage/sessionStorage jika diperlukan
-      await Cookies.set("token", data.token);
+      Cookies.set("token", data.token);
       route.push("/");
       toast.success("Login Berhasil!", { duration: 2000 });
     },

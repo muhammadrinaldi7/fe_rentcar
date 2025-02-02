@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { NextRequest } from "next/server";
 import { jwtDecode } from "jwt-decode";
-import { cookies } from "next/headers";
 export interface TokenSession {
   id: number;
   role: string;
@@ -9,10 +8,13 @@ export interface TokenSession {
   email: string;
 }
 
-export default async function middleware(req: NextRequest) {
-  const session = (await cookies()).get("token")?.value;
-
-  if (session) {
+export default function middleware(req: NextRequest) {
+  const session = req.cookies.get("token")?.value;
+  if (!session) {
+    // toast.error("Not Authenticated");
+    return NextResponse.redirect(new URL("/auth/login", req.url));
+  }
+  try {
     const decoded = jwtDecode(session) as TokenSession;
     if (req.nextUrl.pathname.startsWith("/admin")) {
       if (decoded.role !== "admin") {
@@ -24,8 +26,9 @@ export default async function middleware(req: NextRequest) {
         return NextResponse.redirect(new URL("/admin/dashboard", req.url));
       }
     }
-  } else {
-    return NextResponse.redirect(new URL("/auth/login", req.url));
+  } catch (error) {
+    console.log(error);
+    return NextResponse.redirect(new URL("/", req.url));
   }
 }
 
