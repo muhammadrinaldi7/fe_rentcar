@@ -5,29 +5,32 @@ import { useFetchPromoActive } from "@/api/services/promos/useViewPromos";
 import { ProductCard } from "@/components/cards/ProductCard";
 import PromoCard from "@/components/cards/PromoCard";
 import { LayoutUser } from "@/components/layouts/LayoutUser";
-import { Button } from "@/components/ui/button";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
 } from "@/components/ui/carousel";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
 import { useState } from "react";
 
 export default function Home() {
-  const { data: promos } = useFetchPromoActive(endpoints.promosActive);
-  const [perPage, setPerPage] = useState(5);
-  const {
-    data: fetchCars,
-    isLoading,
-    refetch,
-  } = useFetchAllCars(endpoints.cars + `?perPage=${perPage}`);
-
-  const handleMore = () => {
-    setPerPage(perPage + 5);
-    refetch();
+  const { data: promos, isLoading: isLoadingPromo } = useFetchPromoActive(
+    endpoints.promosActive
+  );
+  const [currentPage, setCurrentPage] = useState(endpoints.cars);
+  const { data: fetchCars, isLoading } = useFetchAllCars(currentPage);
+  const handleMore = (page: string) => {
+    setCurrentPage(page);
   };
-  console.log(fetchCars);
   return (
     <LayoutUser>
       <div className="flex py-8 flex-col gap-8">
@@ -38,22 +41,26 @@ export default function Home() {
               <p className="text-primary-500">See All</p>
             </Link>
           </div>
-          <Carousel>
-            <CarouselContent>
-              {promos?.map((promo, index) => (
-                <CarouselItem key={index} className="lg:basis-1/3">
-                  <PromoCard
-                    code={promo.code}
-                    desc={promo.description}
-                    type={promo.discount_type}
-                    value={promo.discount_value}
-                    startDate={promo.start_date}
-                    endDate={promo.end_date}
-                  />
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-          </Carousel>
+          {isLoadingPromo ? (
+            <Skeleton className="w-full col-span-3 h-36 bg-seccond-400" />
+          ) : (
+            <Carousel>
+              <CarouselContent>
+                {promos?.map((promo, index) => (
+                  <CarouselItem key={index} className="lg:basis-1/3">
+                    <PromoCard
+                      code={promo.code}
+                      desc={promo.description}
+                      type={promo.discount_type}
+                      value={promo.discount_value}
+                      startDate={promo.start_date}
+                      endDate={promo.end_date}
+                    />
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+            </Carousel>
+          )}
         </div>
         <div className="flex flex-col gap-5">
           <div className="flex items-center justify-between px-2">
@@ -61,7 +68,7 @@ export default function Home() {
           </div>
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-3 justify-center items-center">
             {isLoading ? (
-              <p>Loading...</p>
+              <Skeleton className="w-full col-span-3 h-36 bg-seccond-400" />
             ) : (
               fetchCars?.data.map((car, index) => (
                 <ProductCard
@@ -79,8 +86,47 @@ export default function Home() {
               ))
             )}
           </div>
-          <div className="flex items-center justify-center px-2">
-            <Button onClick={handleMore}>More</Button>
+          <div className="flex justify-center">
+            <div className="flex gap-2">
+              <Pagination>
+                <PaginationContent className="gap-1 cursor-pointer">
+                  {fetchCars?.links
+                    .filter((link) => link.url !== null)
+                    .map((link, index) => {
+                      if (link.url) {
+                        return (
+                          <PaginationItem key={index}>
+                            {link.label === "&laquo; Previous" ? (
+                              <PaginationPrevious
+                                className="hover:bg-white hover:text-black"
+                                onClick={() => handleMore(link.url as string)}
+                              />
+                            ) : link.label === "Next &raquo;" ? (
+                              <PaginationNext
+                                className="hover:bg-white hover:text-black"
+                                onClick={() => handleMore(link.url as string)}
+                              />
+                            ) : (
+                              <PaginationLink
+                                className="hover:bg-white hover:text-black"
+                                isActive={link.active}
+                                onClick={() => handleMore(link.url as string)}
+                              >
+                                <div
+                                  dangerouslySetInnerHTML={{
+                                    __html: link.label,
+                                  }}
+                                ></div>
+                              </PaginationLink>
+                            )}
+                          </PaginationItem>
+                        );
+                      }
+                      return null;
+                    })}
+                </PaginationContent>
+              </Pagination>
+            </div>
           </div>
         </div>
       </div>

@@ -19,6 +19,11 @@ import {
   BookPayload,
   useActionBook,
 } from "@/api/services/bookings/useActionBook";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+} from "@/components/ui/carousel";
 export default function CreateBooking() {
   const params = useParams();
   const route = useRouter();
@@ -104,14 +109,27 @@ export default function CreateBooking() {
       <LayoutUser>
         <div className="flex flex-col gap-2 lg:flex-row">
           <div className="block lg:w-2/6 lg:order-2 rounded-lg p-4 bg-white shadow-sm shadow-indigo-100">
-            <Image
-              alt=""
-              width={1000}
-              height={1000}
-              src={detailMobil?.data?.image_urls[0] || "/tesla.png"}
-              className="h-56 w-full rounded-md object-contain"
-            />
-
+            {detailMobil?.data?.image_urls ? (
+              <Carousel>
+                <CarouselContent>
+                  {detailMobil?.data?.image_urls.map((image, index) => (
+                    <CarouselItem key={index}>
+                      <Image
+                        alt=""
+                        width={1000}
+                        height={1000}
+                        src={image}
+                        className="h-56 w-full rounded-md object-contain"
+                      />
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+              </Carousel>
+            ) : (
+              <div className="h-56 w-full flex items-center justify-center rounded-md object-contain bg-gray-200">
+                <p className="text-gray-500">Loading...</p>
+              </div>
+            )}
             <div className="mt-2">
               <dl>
                 <div>

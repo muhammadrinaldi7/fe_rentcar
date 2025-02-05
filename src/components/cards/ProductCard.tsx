@@ -67,14 +67,15 @@ export const ProductCard = (props: ProductCardProps) => {
             Rp. {props.price.toLocaleString("id-ID")} /{" "}
             <span className="text-gray-500">hari</span>
           </p>
-          <Link href={`/user/bookings/create/${props.id}`}>
-            <Button
-              disabled={props.available === 0}
-              className="bg-primary-500 text-white hover:bg-primary-400"
-            >
-              Rental Now
-            </Button>
-          </Link>
+          <Button className="bg-primary-500 text-white hover:bg-primary-400">
+            <Link href={`/user/bookings/detail/${props.id}`}>Detail</Link>
+          </Button>
+          <Button
+            disabled={props.available === 0}
+            className="bg-primary-500 text-white hover:bg-primary-400"
+          >
+            <Link href={`/user/bookings/create/${props.id}`}>Rental Now</Link>
+          </Button>
         </div>
       </CardFooter>
     </Card>

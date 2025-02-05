@@ -11,7 +11,7 @@ export interface SinggleResponse<T> {
   message: string;
   data: T;
 }
-interface Car {
+export interface Car {
   // Anda bisa menyesuaikan properti berdasarkan data mobil yang ada
   id: number;
   name: string;
@@ -53,7 +53,7 @@ interface ApiResponse<T> {
 
 export const useFetchAllCars = (url: string) => {
   return useQuery({
-    queryKey: ["fetchAllCars"],
+    queryKey: ["fetchAllCars", url],
     queryFn: async () => {
       const response = await axiosClient.get<Response<Car[]>>(url);
       return response.data.data;

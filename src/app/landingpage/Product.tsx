@@ -7,11 +7,24 @@ import {
   CarouselContent,
   CarouselItem,
 } from "@/components/ui/carousel";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationPrevious,
+  PaginationNext,
+  PaginationLink,
+} from "@/components/ui/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 export const ProductPage = () => {
-  const { data: fetchCars, isLoading } = useFetchAllCars(endpoints.cars);
+  const [currentPage, setCurrentPage] = useState(endpoints.cars);
+  const { data: fetchCars, isLoading } = useFetchAllCars(currentPage);
+  const handleMore = (page: string) => {
+    setCurrentPage(page);
+  };
   return (
     <>
       <section id="product" className="w-full py-4 px-8">
@@ -75,6 +88,48 @@ export const ProductPage = () => {
                 />
               ))
             )}
+          </div>
+          <div className="flex justify-center">
+            <div className="flex gap-2">
+              <Pagination>
+                <PaginationContent className="gap-1 cursor-pointer">
+                  {fetchCars?.links
+                    .filter((link) => link.url !== null)
+                    .map((link, index) => {
+                      if (link.url) {
+                        return (
+                          <PaginationItem key={index}>
+                            {link.label === "&laquo; Previous" ? (
+                              <PaginationPrevious
+                                className="hover:bg-white hover:shadow-md hover:text-black"
+                                onClick={() => handleMore(link.url as string)}
+                              />
+                            ) : link.label === "Next &raquo;" ? (
+                              <PaginationNext
+                                className="hover:bg-white hover:shadow-md hover:text-black"
+                                onClick={() => handleMore(link.url as string)}
+                              />
+                            ) : (
+                              <PaginationLink
+                                className="hover:bg-white hover:shadow-md hover:text-black"
+                                isActive={link.active}
+                                onClick={() => handleMore(link.url as string)}
+                              >
+                                <div
+                                  dangerouslySetInnerHTML={{
+                                    __html: link.label,
+                                  }}
+                                ></div>
+                              </PaginationLink>
+                            )}
+                          </PaginationItem>
+                        );
+                      }
+                      return null;
+                    })}
+                </PaginationContent>
+              </Pagination>
+            </div>
           </div>
         </div>
       </section>
