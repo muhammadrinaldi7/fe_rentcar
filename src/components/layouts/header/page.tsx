@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
 import { TokenSession } from "@/middleware";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDashboard } from "@fortawesome/free-solid-svg-icons";
+import { faDashboard, faHomeLg } from "@fortawesome/free-solid-svg-icons";
 export default function Header() {
   const { logged, setLogged } = useAuthStore();
   const [admin, setAdmin] = useState(false);
@@ -26,7 +26,7 @@ export default function Header() {
     }
   }, [setLogged]); // Hanya dijalankan sekali di client
 
-  const { isOpen, toggle } = useHeaderStore();
+  const { isOpen, isDashboard, toggleDashboard, toggle } = useHeaderStore();
   const router = useRouter();
   const handleLogout = () => {
     Cookies.remove("token");
@@ -75,11 +75,30 @@ export default function Header() {
         <div className="flex h-16 items-center justify-between">
           <div className="flex-1 md:flex md:items-center md:gap-12">
             {admin ? (
-              <Link className="block text-primary-500" href="/admin/dashboard">
-                <Button className="text-2xl hover:bg-info-400 flex items-center justify-center hover:text-white drop-shadow-lg font-bold">
-                  Go Dashboard <FontAwesomeIcon icon={faDashboard} />
-                </Button>
-              </Link>
+              isDashboard ? (
+                <Link className="block text-primary-500" href="/">
+                  <Button
+                    onClick={toggleDashboard}
+                    className="text-2xl hover:bg-info-400 flex items-center justify-center hover:text-white drop-shadow-lg font-bold"
+                  >
+                    Go Morent{" "}
+                    <FontAwesomeIcon icon={faHomeLg} aria-hidden="true" />
+                  </Button>
+                </Link>
+              ) : (
+                <Link
+                  className="block text-primary-500"
+                  href="/admin/dashboard"
+                >
+                  <Button
+                    onClick={toggleDashboard}
+                    className="text-2xl hover:bg-info-400 flex items-center justify-center hover:text-white drop-shadow-lg font-bold"
+                  >
+                    Go Dashboard{" "}
+                    <FontAwesomeIcon icon={faDashboard} aria-hidden="true" />
+                  </Button>
+                </Link>
+              )
             ) : (
               <Link className="block text-primary-500" href="/user/home">
                 <h1 className="text-2xl drop-shadow-lg font-bold">MORENT</h1>
@@ -183,7 +202,15 @@ export default function Header() {
                       >
                         My profile
                       </a>
-
+                      {!admin && (
+                        <Link
+                          href="/user/bookings"
+                          className="block rounded-lg px-4 py-2 text-sm text-seccond-500 hover:bg-gray-50 hover:text-gray-700"
+                          role="menuitem"
+                        >
+                          My Bookings
+                        </Link>
+                      )}
                       <a
                         href="#"
                         className="block rounded-lg px-4 py-2 text-sm text-seccond-500 hover:bg-gray-50 hover:text-gray-700"

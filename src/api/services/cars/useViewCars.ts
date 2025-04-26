@@ -50,7 +50,44 @@ interface ApiResponse<T> {
   to: number;
   total: number;
 }
+interface ResponseArray<T> {
+  success: boolean;
+  message: string;
+  data: T[];
+}
+interface CarMonitor {
+  id: number;
+  name: string;
+  brand: string;
+  model: string;
+  fuel: number;
+  capacity: number;
+  transmission: string;
+  year: string;
+  price_per_day: number;
+  available: number;
+  image_urls: string[];
+  created_at: string;
+  updated_at: string;
+  bookings: BookMonitor[];
+}
 
+interface BookMonitor {
+  id: number;
+  user_id: number;
+  car_id: number;
+  promo_code: string | null;
+  external_id: string;
+  start_date: string;
+  end_date: string;
+  total_price: number;
+  discount_applied: number;
+  final_price: number;
+  status: string;
+  created_at: string;
+  updated_at: string;
+  late_days: number;
+}
 export const useFetchAllCars = (url: string) => {
   return useQuery({
     queryKey: ["fetchAllCars", url],
@@ -65,6 +102,16 @@ export const useFetchDetailCar = (url: string) => {
     queryKey: ["detailCar"],
     queryFn: async () => {
       const response = await axiosClient.get<SinggleResponse<Car>>(url);
+      return response.data;
+    },
+  });
+};
+
+export const useFetchCarsInWay = (url: string) => {
+  return useQuery({
+    queryKey: ["fetchCarsInWay"],
+    queryFn: async () => {
+      const response = await axiosClient.get<ResponseArray<CarMonitor>>(url);
       return response.data;
     },
   });

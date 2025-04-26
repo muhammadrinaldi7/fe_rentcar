@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import Footer from "./footer/page";
-import { HeaderAdmin } from "./header/HeaderAdmin";
+// import { HeaderAdmin } from "./header/HeaderAdmin";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCar,
@@ -14,6 +14,7 @@ import { Button } from "../ui/button";
 import toast from "react-hot-toast";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
+import Header from "./header/page";
 export const LayoutAdmin = ({
   children,
   title,
@@ -61,7 +62,7 @@ export const LayoutAdmin = ({
   };
   return (
     <>
-      <HeaderAdmin />
+      <Header />
       <div className="mx-auto container w-full flex justify-start bg-[#F6F7F9]">
         <div className="w-1/6  hidden h-full py-4 px-6 justify-between lg:flex flex-col gap-32 bg-white">
           <div className="flex flex-col gap-4">
@@ -136,9 +137,7 @@ export const LayoutAdmin = ({
             <p className="text-center mt-1">Log Out</p>
           </Button>
         </div>
-        <div className=" m-4 lg:m-8 p-6 w-full bg-white rounded-lg">
-          {children}
-        </div>
+        <div className="p-4 w-full rounded-lg">{children}</div>
       </div>
       <Footer />
     </>

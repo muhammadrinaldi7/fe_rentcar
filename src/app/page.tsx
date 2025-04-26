@@ -7,6 +7,7 @@ import { ProductPage } from "./landingpage/Product";
 import { AboutPage } from "./landingpage/About";
 import { useEffect } from "react";
 import AOS from "aos";
+import "react-datepicker/dist/react-datepicker.css";
 export default function Home() {
   useEffect(() => {
     AOS.init({

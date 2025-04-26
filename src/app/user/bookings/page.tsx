@@ -90,7 +90,13 @@ export default function Bookings() {
                           </p>
                         </span>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="flex gap-2">
+                        <Button
+                          size="sm"
+                          className="w-full bg-info-500 text-white hover:text-seccond-400 hover:bg-info-600"
+                        >
+                          Detail
+                        </Button>
                         <Link
                           className={`${
                             item.status != "pending"

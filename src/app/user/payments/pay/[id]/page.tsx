@@ -26,31 +26,28 @@ export default function ProcessPayment() {
     );
 
     const data = await res.json();
-    return data.invoice_url; // Redirect ke halaman pembayaran Xendit
+    console.log(data);
+    return data;
   };
   const handlePayment = async () => {
     try {
       setLoading(true);
       if (!data?.id) throw new Error("Data ID tidak ditemukan");
-
-      const newTab = window.open("", "_blank");
-      if (newTab) {
-        const invoiceUrl = await createXenditInvoice(data.id);
-        if (invoiceUrl) {
-          newTab.location.href = invoiceUrl; // Redirect tab baru ke invoice URL
-        } else {
-          throw new Error("Gagal mendapatkan invoice URL");
-        }
+      const response = await createXenditInvoice(data.id);
+      if (response.available_car == 0) {
+        toast.error("Maaf, mobil sudah tidak tersedia");
       } else {
-        throw new Error("Gagal membuka tab baru");
-        // You can also throw an error or handle this situation in a way that makes sense for your application
+        const newTab = window.open("", "_blank");
+        if (newTab) {
+          toast.success("Pembayaran Berhasil");
+          newTab.location.href = response.invoice_url;
+        }
       }
     } catch (error) {
       console.error("Payment Error:", error);
       alert("Terjadi kesalahan saat membuat pembayaran. Coba lagi!");
     } finally {
       setLoading(false);
-      toast.success("Pembayaran Berhasil!");
       route.push("/user/bookings");
     }
   };
@@ -125,7 +122,7 @@ export default function ProcessPayment() {
             <button
               onClick={handlePayment}
               disabled={loading}
-              className={`px-4 py-2 text-white rounded ${
+              className={`px-4 py-2 text-white rounded-lg shadow-md ${
                 loading ? "bg-gray-400" : "bg-blue-500 hover:bg-blue-600"
               }`}
             >

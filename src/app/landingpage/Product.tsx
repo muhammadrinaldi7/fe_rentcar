@@ -22,6 +22,7 @@ import { useState } from "react";
 export const ProductPage = () => {
   const [currentPage, setCurrentPage] = useState(endpoints.cars);
   const { data: fetchCars, isLoading } = useFetchAllCars(currentPage);
+
   const handleMore = (page: string) => {
     setCurrentPage(page);
   };

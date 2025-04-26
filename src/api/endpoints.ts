@@ -16,6 +16,7 @@ const endpoints = {
   detailCar: "/cars/",
   car: "/car/",
   createCar: "/cars",
+  carsOtw: "/get-otw-cars",
 
   // Booking
   booking: "/booking",
